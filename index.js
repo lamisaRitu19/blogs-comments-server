@@ -40,6 +40,13 @@ async function run() {
       res.send(blogs);
     });
 
+    app.get("/blogs/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { id: parseInt(id) };
+      const result = await blogCollection.findOne(query);
+      res.send(result);
+    });
+
     app.post("/blogs", async (req, res) => {
       const blog = req.body;
       const result = await blogCollection.insertOne(blog);
