@@ -74,6 +74,41 @@ async function run() {
       res.send(comments);
     });
 
+    app.get("/comments/:blogId", async (req, res) => {
+      const blogId = req.params.blogId;
+      const query = { blogId: parseInt(blogId) };
+      const result = await commentCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    app.post("/comments", async (req, res) => {
+      const comment = req.body;
+      const result = await commentCollection.insertOne(comment);
+      res.send(result);
+    });
+
+    app.put("/comments/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { id: parseInt(id) };
+      const data = req.body;
+      const updatedComment = {
+        $set: {
+          name: data.name,
+          email: data.email,
+          body: data.body,
+        },
+      };
+      const result = await commentCollection.updateOne(filter, updatedComment);
+      res.send(result);
+    });
+
+    app.delete("/comments", async (req, res) => {
+      const comment = req.body;
+      const filter = { id: comment.deleteId };
+      const result = await commentCollection.deleteOne(filter);
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
